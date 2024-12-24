@@ -1,12 +1,12 @@
 from mimetypes import inited
 
-from flask import Flask,session,g
+from flask import Flask, session, g
 import config
-from exts import db,mail
+from exts import db, mail
 from models import UserModel
 from blueprints.author import bp as author_bp
-from blueprints.posts import bp as exchangeposts_bp
 from flask_migrate import Migrate
+from blueprints.posts import bp as posts_bp
 
 # blueprint:做模块化
 
@@ -16,12 +16,12 @@ app.config.from_object(config)
 migrate = Migrate(app, db)
 db.init_app(app)
 app.register_blueprint(author_bp)
-app.register_blueprint(exchangeposts_bp)
+app.register_blueprint(posts_bp)
 mail.init_app(app)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
 app.config['DEBUG'] = True
 
-
+app.config['SECRET_KEY'] = 'asfdagsgaysgfysafsyufas;lf'  # 必须配置 session 使用的密钥
 
 # flask db init 一次
 # flask db migrate
@@ -37,6 +37,7 @@ def my_before_request():
         setattr(g, 'user', user)
     else:
         setattr(g, 'user', None)
+
 
 @app.context_processor
 def my_context_processor():

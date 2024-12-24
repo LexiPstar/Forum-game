@@ -1,6 +1,7 @@
 from exts import db
 from datetime import datetime
 
+
 class UserModel(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -28,3 +29,17 @@ class QuestionModel(db.Model):
     #外键
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     author = db.relationship(UserModel, backref='questions')
+
+
+class CommentatorModel(db.Model):
+    __tablename__ = 'commentator'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    content = db.Column(db.Text, nullable=False)
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+# 谁发布，哪个贴   外键
+    question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    question = db.relationship(QuestionModel, backref=db.backref('commentators', order_by=create_time.desc()))
+    author = db.relationship(QuestionModel, backref='commentators')

@@ -1,24 +1,18 @@
 import random
 import string
-from flask import Blueprint, render_template, jsonify, request, redirect, url_for,session
+from flask import Blueprint, render_template, jsonify, request, redirect, url_for, session
 from flask_mail import Message
-
 
 from exts import mail, db
 from models import EmailcaptchaModel
-from .forms import RegisterForm,LoginForm
+from .forms import RegisterForm, LoginForm
 from models import UserModel
-from werkzeug.security import generate_password_hash,check_password_hash
-
-
-
+from werkzeug.security import generate_password_hash, check_password_hash
 
 bp = Blueprint('author', __name__, url_prefix='/author')
 
 
-
-
-@bp.route('/login',methods=['POST','GET'])
+@bp.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'GET':
         return render_template('login.html')
@@ -36,18 +30,13 @@ def login():
                 # cookie 一般用来存放登录授权数据
                 # flask中的session 是加密存储在cookie中的
                 session['user_id'] = user.id
-                return redirect(url_for('post.index'))
+                return redirect(url_for('posts.index'))
             else:
                 print('用户名或密码输入错误！')
                 return redirect(url_for('author.login'))
         else:
             print(form.errors)
             return redirect(url_for('author.login'))
-
-
-
-
-
 
 
 # GET:服务器获取数据
@@ -73,8 +62,7 @@ def register(username=None, email=None):
             return redirect(url_for('author.register'))
 
 
-
-#没有明确methods，默认是'GET'
+# 没有明确methods，默认是'GET'
 @bp.route('/captcha/email')
 def email_captcha():
     email = request.args.get('email')
@@ -109,5 +97,6 @@ def email_captcha():
 
 @bp.route('/logout')
 def logout():
-    session.clear()
-    return redirect(url_for('exchangeposts.index'))
+    session.pop('user_id', None)  # 清除用户 ID
+    session.clear()  # 清除会话数据
+    return redirect(url_for('posts.index'))  # 重定向到首页

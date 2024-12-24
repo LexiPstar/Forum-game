@@ -8,6 +8,7 @@
 .side-question{
     flex-basis: 38px;
     height:100%;
+    border-radius: 50%;
 }
 .side-question-avatar{
     width: 38px;
