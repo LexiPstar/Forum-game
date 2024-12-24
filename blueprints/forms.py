@@ -1,5 +1,5 @@
 import wtforms
-from wtforms.validators import Email, Length, EqualTo
+from wtforms.validators import Email, Length, EqualTo, InputRequired
 from exts import db
 # from blueprints.author import email_captcha
 from models import UserModel, EmailcaptchaModel
@@ -50,3 +50,8 @@ class LoginForm(wtforms.Form):
 class QuestionForm(wtforms.Form):
     title = wtforms.StringField(validators=[Length(min=3,max=100,message='标题字符过长')])
     content = wtforms.StringField(validators=[Length(min=10,message='内容字数过少')])
+
+
+class CommentForm(wtforms.Form):
+    content = wtforms.StringField(validators=[Length(min=10,message='内容字数过少')])
+    question_id = wtforms.IntegerField(validators=[InputRequired(message='必须要传入问题id！')])

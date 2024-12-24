@@ -23,7 +23,7 @@ class QuestionModel(db.Model):
     __tablename__ = 'question'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
+    content = db.Column(db.Text,nullable=False)
     create_time = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
     #外键
@@ -40,6 +40,6 @@ class CommentatorModel(db.Model):
 # 谁发布，哪个贴   外键
     question_id = db.Column(db.Integer, db.ForeignKey('question.id'), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
+#关系
     question = db.relationship(QuestionModel, backref=db.backref('commentators', order_by=create_time.desc()))
-    author = db.relationship(QuestionModel, backref='commentators')
+    author = db.relationship(UserModel, backref='commentators')

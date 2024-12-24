@@ -1,12 +1,12 @@
 from flask import Blueprint, request, render_template, g, redirect, url_for
 
 import app
-from .forms import QuestionForm
-from models import QuestionModel
+from .forms import QuestionForm, CommentForm
+from models import QuestionModel, CommentatorModel
 from exts import db
 from decorators import login_required
 
-bp = Blueprint('posts', __name__, url_prefix='',static_folder='static')
+bp = Blueprint('posts', __name__, url_prefix='', static_folder='static')
 
 
 @bp.route('/')
@@ -39,3 +39,20 @@ def public_question():
 def post_detail(post_id):
     question = QuestionModel.query.get(post_id)
     return render_template('detail.html', question=question)
+
+
+# @bp.route('commented/public',methods=['POST'])
+@bp.post('/commented/public')
+@login_required
+def comment_public():
+    form = CommentForm(request.form)
+    if form.validate():
+        content = form.content.data
+        question_id = form.question_id.data
+        commentator = CommentatorModel(content=content, question_id=question_id, author_id=g.user.id)
+        db.session.add(commentator)
+        db.session.commit()
+        return redirect(url_for('posts.post_detail', post_id=question_id))
+    else:
+        print(form.errors)
+        return redirect(url_for('posts.post_detail', post_id=request.form.get('question_id')))
