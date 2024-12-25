@@ -56,3 +56,10 @@ def comment_public():
     else:
         print(form.errors)
         return redirect(url_for('posts.post_detail', post_id=request.form.get('question_id')))
+
+
+@bp.route('/search')
+def search():
+    s = request.args.get('s')
+    questions = QuestionModel.query.filter(QuestionModel.title.contains(s)).all()
+    return render_template('index.html', questions=questions)
